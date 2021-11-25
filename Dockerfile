@@ -1,13 +1,13 @@
-FROM busybox:1.34.1-musl
+FROM python:3.8-alpine3.14
 
-RUN apt update && apt install -y python3-pip python3-dev
-
-COPY . /app
+RUN mkdir /app
 WORKDIR /app
 
-RUN pip install -r requirements.txt
+COPY requirements.txt /app
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . /app
 
 EXPOSE 81
 
-ENTRYPOINT ['python3']
-CMD ['hello.py']
+CMD [ "python", "./hello.py" ]
