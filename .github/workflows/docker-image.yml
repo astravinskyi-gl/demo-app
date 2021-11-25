@@ -21,7 +21,7 @@ jobs:
       run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
       
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag demoapp:$(date +%s) --tag demoapp:latest
+      run: docker build . --file Dockerfile --tag $DOCKER_USER/demoapp:$(date +%s) --tag $DOCKER_USER/demoapp:latest
 
     - name: Push image to the Docker Hub
-      run: docker push --all-tags demoapp
+      run: docker push --all-tags $DOCKER_USER/demoapp
