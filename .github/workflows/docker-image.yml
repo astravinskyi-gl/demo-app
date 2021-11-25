@@ -18,10 +18,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Login to DockerHub
-      run: docker login -u ${{ DOCKER_USER }} -p ${{ DOCKER_PASSWORD }}
+      run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
       
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag demoapp:$(date +%s) --tag demoapp:latest
 
     - name: Push image to the Docker Hub
-      run: docker push ${{ DOCKER_USER }}/${{ DOCKER_HUB_REPO }}
+      run: docker push $DOCKER_USER/$DOCKER_HUB_REPO
