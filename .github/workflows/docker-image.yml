@@ -33,11 +33,12 @@ jobs:
     - name: Add tag to the build
       run: autotag --scheme=conventional
       
-    - name: Get the last tag
-      run: export TAG=$(git tag)
+    - name: Set tag var
+      id: vars
+      run: echo ::set-output name=docker_tag::$(git describe --tags --abbrev=0)
       
     - name: Show
-      run: echo $TAG
+      run: echo ${{ steps.vars.outputs.docker_tag }}
       
 #     - name: Get the version
 #       id: get_version
