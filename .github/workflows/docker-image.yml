@@ -36,6 +36,12 @@ jobs:
     - name: Check
       run: git tag
       
+    - name: Get the last tag
+      run: TAG=git describe --tags --abbrev=0
+      
+    - name: Show
+      run: echo $TAG
+      
 #     - name: Get the version
 #       id: get_version
 #       run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
