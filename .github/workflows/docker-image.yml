@@ -17,6 +17,13 @@ jobs:
     
     steps:
     - uses: actions/checkout@v2
+    
+    - name: Install autotag
+      run: curl -sL https://git.io/autotag-install | sh -- v1.3.13
+      
+    - name: Add tag to the build
+      run: autotag
+      
     - name: Login to DockerHub
       run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD 
       
