@@ -38,17 +38,13 @@ jobs:
       run: echo ::set-output name=docker_tag::$(git describe --tags --abbrev=0)
       
     - name: Show
-      run: echo ${{ steps.vars.outputs.docker_tag }}
+      run: echo 
       
-#     - name: Get the version
-#       id: get_version
-#       run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+    - name: Login to DockerHub
+      run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD 
       
-#     - name: Login to DockerHub
-#       run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD 
-      
-#     - name: Build the Docker image
-#       run: docker build . --file Dockerfile --tag $DOCKER_USER/$DOCKER_HUB_REPO:${{ steps.get_version.outputs.VERSION }} --tag $DOCKER_USER/$DOCKER_HUB_REPO:latest
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag $DOCKER_USER/$DOCKER_HUB_REPO:${{ steps.vars.outputs.docker_tag }} --tag $DOCKER_USER/$DOCKER_HUB_REPO:latest
 
-#     - name: Push image to the Docker Hub
-#       run: docker push --all-tags $DOCKER_USER/$DOCKER_HUB_REPO
+    - name: Push image to the Docker Hub
+      run: docker push --all-tags $DOCKER_USER/$DOCKER_HUB_REPO
