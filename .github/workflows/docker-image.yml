@@ -33,11 +33,8 @@ jobs:
     - name: Add tag to the build
       run: autotag --scheme=conventional
       
-    - name: Check
-      run: git tag
-      
     - name: Get the last tag
-      run: TAG=git describe --tags --abbrev=0
+      run: TAG=git tag
       
     - name: Show
       run: echo $TAG
