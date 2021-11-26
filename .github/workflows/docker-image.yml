@@ -34,7 +34,7 @@ jobs:
       run: autotag --scheme=conventional
       
     - name: Get the last tag
-      run: TAG=$(git tag)
+      run: export TAG=$(git tag)
       
     - name: Show
       run: echo $TAG
