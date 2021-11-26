@@ -21,6 +21,15 @@ jobs:
     - name: Install autotag
       run: curl -sL https://git.io/autotag-install | sudo sh -s -- -b /usr/bin
       
+    - name: preconfigure to autotag
+      run: |
+        git fetch --tags --unshallow --prune;
+
+        if [ $(git rev-parse --abbrev-ref HEAD) != "master" ]; then
+          # ensure a local 'master' branch exists at 'refs/heads/master'
+          git branch --track master origin/master
+        fi
+      
     - name: Add tag to the build
       run: autotag
       
