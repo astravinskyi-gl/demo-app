@@ -31,7 +31,7 @@ jobs:
         fi
       
     - name: Add tag to the build
-      run: autotag
+      run: autotag --scheme=conventional
       
     - name: Check
       run: git tag
