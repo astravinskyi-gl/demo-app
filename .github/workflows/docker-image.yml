@@ -26,7 +26,7 @@ jobs:
         with:
           branch: master
           tag_prefix: "v"
-          major_pattern: "*!:"
+          major_pattern: "BREAKING CHANGE:"
           minor_pattern: "feat:"
           format: "v${major}.${minor}.${patch}"
 
