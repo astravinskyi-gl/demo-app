@@ -11,7 +11,6 @@ jobs:
     env:
       DOCKER_USER: ${{ secrets.DOCKER_USER }}
       DOCKER_HUB_REPO: demoapp
-      #GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     
     steps:
       - name: Checkout
@@ -20,50 +19,59 @@ jobs:
           # Fetch all commits
           fetch-depth: 0
 
-      - name: Add semantic version
-        id: version
-        uses: PaulHatch/semantic-version@v4.0.3
-        with:
-          branch: master
-          tag_prefix: "v"
-          major_pattern: "BREAKING CHANGE:"
-          minor_pattern: "feat:"
-          format: "v${major}.${minor}.${patch}"
+#       - name: Add semantic version
+#         id: version
+#         uses: PaulHatch/semantic-version@v4.0.3
+#         with:
+#           branch: master
+#           tag_prefix: "v"
+#           major_pattern: "BREAKING CHANGE:"
+#           minor_pattern: "feat:"
+#           format: "v${major}.${minor}.${patch}"
 
-      - name: Login to DockerHub
-        uses: docker/login-action@v1
-        with:
-          username: ${{ env.DOCKER_USER }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+#       - name: Login to DockerHub
+#         uses: docker/login-action@v1
+#         with:
+#           username: ${{ env.DOCKER_USER }}
+#           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and push
-        uses: docker/build-push-action@v2
-        with:
-          push: true
-          tags: ${{ env.DOCKER_USER }}/${{ env.DOCKER_HUB_REPO }}:latest, ${{ env.DOCKER_USER }}/${{ env.DOCKER_HUB_REPO }}:${{ steps.version.outputs.version }}
+#       - name: Build and push
+#         uses: docker/build-push-action@v2
+#         with:
+#           push: true
+#           tags: ${{ env.DOCKER_USER }}/${{ env.DOCKER_HUB_REPO }}:latest, ${{ env.DOCKER_USER }}/${{ env.DOCKER_HUB_REPO }}:${{ steps.version.outputs.version }}
 
-      - name: Create Release
-        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.github_token }}
-        with:
-          tag_name: ${{ steps.version.outputs.version }}
-          release_name: ${{ steps.version.outputs.version }}
-      
-#     - name: Set tag var
-#       id: vars
-#       run: echo ::set-output name=docker_tag::$(git describe --tags --abbrev=0)
-      
-#     - name: Show
-#       run: echo 
-      
-#     - name: Login to DockerHub
-#       run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD 
-      
-#     - name: Build the Docker image
-#       run: docker build . --file Dockerfile --tag $DOCKER_USER/$DOCKER_HUB_REPO:${{ steps.vars.outputs.docker_tag }} --tag $DOCKER_USER/$DOCKER_HUB_REPO:latest
+#       - name: Create Release
+#         if: ${{ !startsWith(github.ref, 'refs/tags/') }}
+#         uses: actions/create-release@v1
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.github_token }}
+#         with:
+#           tag_name: ${{ steps.version.outputs.version }}
+#           release_name: ${{ steps.version.outputs.version }}
 
-#     - name: Push image to the Docker Hub
-#       run: docker push --all-tags $DOCKER_USER/$DOCKER_HUB_REPO
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Install and configure kubectl
+        run: |
+          VERSION=$(curl --silent https://storage.googleapis.com/kubernetes-release/release/stable.txt)
+          curl https://storage.googleapis.com/kubernetes-release/release/$VERSION/bin/linux/amd64/kubectl \
+              --progress-bar \
+              --location \
+              --remote-name
+          chmod +x kubectl
+          sudo mv kubectl /usr/local/bin/
+          echo ${{ secrets.KUBECONFIG }} | base64 --decode > kubeconfig.yaml
+
+      - name: Deploy
+        run: |
+          export KUBECONFIG=kubeconfig.yaml
+          kubectl describe nodes
+      
+
     
