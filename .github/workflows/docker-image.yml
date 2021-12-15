@@ -8,9 +8,15 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    permissions:
+      id-token: write
+      contents: read
+
     env:
       DOCKER_USER: ${{ secrets.DOCKER_USER }}
       DOCKER_HUB_REPO: demoapp
+      AWS_REGION: us-east-2
+      AWS_ROLE: arn:aws:iam::331226338131:role/cgl-str-github-actions
     
     steps:
       - name: Checkout
@@ -53,8 +59,8 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: ${{ env.AWS_ROLE }}
+          role-session-name: k8s-job-gh-actions
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Install and configure kubectl
@@ -71,7 +77,7 @@ jobs:
       - name: Deploy
         run: |
           export KUBECONFIG=kubeconfig.yaml
-          kubectl describe nodes
+          kubectl get jobs
       
 
     
