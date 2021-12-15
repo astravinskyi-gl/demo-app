@@ -1,0 +1,11 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: test-hello
+spec:
+  backoffLimit: 5
+  template:
+    containers:
+    - name: demoapp
+      image: astravinskyigl/demoapp:v1.1.1
+    restartPolicy: OnFailure
