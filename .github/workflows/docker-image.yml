@@ -79,7 +79,6 @@ jobs:
         run: |
           export KUBECONFIG=kubeconfig.yaml
           kubectl replace --force -f test-job.yml
-          #kubectl apply -f test-job.yml
       
 
     
