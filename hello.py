@@ -9,6 +9,6 @@
 # app.run(host='0.0.0.0', port=81)
 
 def print_hi(name):
-    print("Hello " + name + " from the testing app")
+    print("Hello " + name + " , it is the message from the test app")
     
-print_hi("Andrii")
+print_hi("everyone")
