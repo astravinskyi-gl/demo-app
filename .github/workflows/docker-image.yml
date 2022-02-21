@@ -26,15 +26,15 @@ jobs:
           # Fetch all commits
           fetch-depth: 0
 
-      - name: Add semantic version
-        id: version
-        uses: PaulHatch/semantic-version@v4.0.3
-        with:
-          branch: master
-          tag_prefix: "v"
-          major_pattern: "BREAKING CHANGE:"
-          minor_pattern: "feat:"
-          format: "v${major}.${minor}.${patch}"
+#       - name: Add semantic version
+#         id: version
+#         uses: PaulHatch/semantic-version@v4.0.3
+#         with:
+#           branch: master
+#           tag_prefix: "v"
+#           major_pattern: "BREAKING CHANGE:"
+#           minor_pattern: "feat:"
+#           format: "v${major}.${minor}.${patch}"
 
       - name: Login to DockerHub
         uses: docker/login-action@v1
@@ -46,39 +46,40 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: ${{ env.DOCKER_USER }}/${{ env.DOCKER_HUB_REPO }}:latest, ${{ env.DOCKER_USER }}/${{ env.DOCKER_HUB_REPO }}:${{ steps.version.outputs.version }}
+          #tags: ${{ env.DOCKER_USER }}/${{ env.DOCKER_HUB_REPO }}:latest, ${{ env.DOCKER_USER }}/${{ env.DOCKER_HUB_REPO }}:${{ steps.version.outputs.version }}
+          tags: ${{ env.DOCKER_USER }}/${{ env.DOCKER_HUB_REPO }}:job
 
-      - name: Create Release
-        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.github_token }}
-        with:
-          tag_name: ${{ steps.version.outputs.version }}
-          release_name: ${{ steps.version.outputs.version }}
+#       - name: Create Release
+#         if: ${{ !startsWith(github.ref, 'refs/tags/') }}
+#         uses: actions/create-release@v1
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.github_token }}
+#         with:
+#           tag_name: ${{ steps.version.outputs.version }}
+#           release_name: ${{ steps.version.outputs.version }}
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          role-to-assume: ${{ env.AWS_ROLE }}
-          role-session-name: k8s-job-gh-actions
-          aws-region: ${{ env.AWS_REGION }}
+#       - name: Configure AWS credentials
+#         uses: aws-actions/configure-aws-credentials@v1
+#         with:
+#           role-to-assume: ${{ env.AWS_ROLE }}
+#           role-session-name: k8s-job-gh-actions
+#           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Install and configure kubectl
-        run: |
-          VERSION=$(curl --silent https://storage.googleapis.com/kubernetes-release/release/stable.txt)
-          curl https://storage.googleapis.com/kubernetes-release/release/$VERSION/bin/linux/amd64/kubectl \
-              --progress-bar \
-              --location \
-              --remote-name
-          chmod +x kubectl
-          sudo mv kubectl /usr/local/bin/
-          echo ${{ secrets.KUBECONFIG }} | base64 -di > kubeconfig.yaml
+#       - name: Install and configure kubectl
+#         run: |
+#           VERSION=$(curl --silent https://storage.googleapis.com/kubernetes-release/release/stable.txt)
+#           curl https://storage.googleapis.com/kubernetes-release/release/$VERSION/bin/linux/amd64/kubectl \
+#               --progress-bar \
+#               --location \
+#               --remote-name
+#           chmod +x kubectl
+#           sudo mv kubectl /usr/local/bin/
+#           echo ${{ secrets.KUBECONFIG }} | base64 -di > kubeconfig.yaml
 
-      - name: Deploy
-        run: |
-          export KUBECONFIG=kubeconfig.yaml
-          kubectl replace --force -f test-job.yml
+#       - name: Deploy
+#         run: |
+#           export KUBECONFIG=kubeconfig.yaml
+#           kubectl replace --force -f test-job.yml
       
 
     
