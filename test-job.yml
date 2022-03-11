@@ -8,5 +8,5 @@ spec:
     spec:
       containers:
       - name: demoapp
-        image: astravinskyigl/demoapp:latest
+        image: astravinskyigl/demoapp:job
       restartPolicy: OnFailure
