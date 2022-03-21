@@ -17,7 +17,7 @@ jobs:
       DOCKER_USER: ${{ secrets.DOCKER_USER }}
       DOCKER_HUB_REPO: demoapp
       AWS_REGION: us-east-2
-      AWS_ROLE: arn:aws:iam::331226338131:role/cgl-str-github-actions
+      AWS_ROLE: arn:aws:iam::331226338131:role/ci-GithubActionsRole
     
     steps:
       - name: Checkout
@@ -25,61 +25,108 @@ jobs:
         with:
           # Fetch all commits
           fetch-depth: 0
-
-#       - name: Add semantic version
-#         id: version
-#         uses: PaulHatch/semantic-version@v4.0.3
-#         with:
-#           branch: master
-#           tag_prefix: "v"
-#           major_pattern: "BREAKING CHANGE:"
-#           minor_pattern: "feat:"
-#           format: "v${major}.${minor}.${patch}"
-
-      - name: Login to DockerHub
-        uses: docker/login-action@v1
+          
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
         with:
-          username: ${{ env.DOCKER_USER }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Build and push
-        uses: docker/build-push-action@v2
+          role-to-assume: ${{ env.AWS_ROLE }}
+          #role-session-name: k8s-job-gh-actions
+          aws-region: ${{ env.AWS_REGION }}
+          
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v2.0
         with:
-          push: true
-          #tags: ${{ env.DOCKER_USER }}/${{ env.DOCKER_HUB_REPO }}:latest, ${{ env.DOCKER_USER }}/${{ env.DOCKER_HUB_REPO }}:${{ steps.version.outputs.version }}
-          tags: ${{ env.DOCKER_USER }}/${{ env.DOCKER_HUB_REPO }}:job
+          version: 'v1.23.5'
+          
+      - name: Set Kubernetes Context
+        uses: azure/k8s-set-context@v1
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.KUBECONFIG }}
 
-#       - name: Create Release
-#         if: ${{ !startsWith(github.ref, 'refs/tags/') }}
-#         uses: actions/create-release@v1
-#         env:
-#           GITHUB_TOKEN: ${{ secrets.github_token }}
+      - name: Install Helm
+        uses: azure/setup-helm@v1
+        with:
+          version: v3.8.0
+
+      - name: Check if another CI is not in progress
+        timeout-minutes: 10
+        run: | 
+          MARKER=$(kubectl get deploy ci-helper -o=jsonpath='{.spec.replicas}')
+          while [ $MARKER -ne 0 ]
+          do
+            MARKER=$(kubectl get deploy ci-helper -o=jsonpath='{.spec.replicas}')
+            sleep $((2 + $RANDOM % 3))
+          done
+          
+      - name: Set marker in ci-helper to blocked
+        run: kubectl scale deployment ci-helper --replicas=1
+
+      - name: test ci-helper
+        run: |
+          sleep 30
+          kubectl get po
+          
+      - name: Release marker in ci-helper
+        run: kubectl scale deployment ci-helper --replicas=0
+          
+          
+          
+
+# #       - name: Add semantic version
+# #         id: version
+# #         uses: PaulHatch/semantic-version@v4.0.3
+# #         with:
+# #           branch: master
+# #           tag_prefix: "v"
+# #           major_pattern: "BREAKING CHANGE:"
+# #           minor_pattern: "feat:"
+# #           format: "v${major}.${minor}.${patch}"
+
+#       - name: Login to DockerHub
+#         uses: docker/login-action@v1
 #         with:
-#           tag_name: ${{ steps.version.outputs.version }}
-#           release_name: ${{ steps.version.outputs.version }}
+#           username: ${{ env.DOCKER_USER }}
+#           password: ${{ secrets.DOCKER_PASSWORD }}
 
-#       - name: Configure AWS credentials
-#         uses: aws-actions/configure-aws-credentials@v1
+#       - name: Build and push
+#         uses: docker/build-push-action@v2
 #         with:
-#           role-to-assume: ${{ env.AWS_ROLE }}
-#           role-session-name: k8s-job-gh-actions
-#           aws-region: ${{ env.AWS_REGION }}
+#           push: true
+#           #tags: ${{ env.DOCKER_USER }}/${{ env.DOCKER_HUB_REPO }}:latest, ${{ env.DOCKER_USER }}/${{ env.DOCKER_HUB_REPO }}:${{ steps.version.outputs.version }}
+#           tags: ${{ env.DOCKER_USER }}/${{ env.DOCKER_HUB_REPO }}:job
 
-#       - name: Install and configure kubectl
-#         run: |
-#           VERSION=$(curl --silent https://storage.googleapis.com/kubernetes-release/release/stable.txt)
-#           curl https://storage.googleapis.com/kubernetes-release/release/$VERSION/bin/linux/amd64/kubectl \
-#               --progress-bar \
-#               --location \
-#               --remote-name
-#           chmod +x kubectl
-#           sudo mv kubectl /usr/local/bin/
-#           echo ${{ secrets.KUBECONFIG }} | base64 -di > kubeconfig.yaml
+# #       - name: Create Release
+# #         if: ${{ !startsWith(github.ref, 'refs/tags/') }}
+# #         uses: actions/create-release@v1
+# #         env:
+# #           GITHUB_TOKEN: ${{ secrets.github_token }}
+# #         with:
+# #           tag_name: ${{ steps.version.outputs.version }}
+# #           release_name: ${{ steps.version.outputs.version }}
 
-#       - name: Deploy
-#         run: |
-#           export KUBECONFIG=kubeconfig.yaml
-#           kubectl replace --force -f test-job.yml
+# #       - name: Configure AWS credentials
+# #         uses: aws-actions/configure-aws-credentials@v1
+# #         with:
+# #           role-to-assume: ${{ env.AWS_ROLE }}
+# #           role-session-name: k8s-job-gh-actions
+# #           aws-region: ${{ env.AWS_REGION }}
+
+# #       - name: Install and configure kubectl
+# #         run: |
+# #           VERSION=$(curl --silent https://storage.googleapis.com/kubernetes-release/release/stable.txt)
+# #           curl https://storage.googleapis.com/kubernetes-release/release/$VERSION/bin/linux/amd64/kubectl \
+# #               --progress-bar \
+# #               --location \
+# #               --remote-name
+# #           chmod +x kubectl
+# #           sudo mv kubectl /usr/local/bin/
+# #           echo ${{ secrets.KUBECONFIG }} | base64 -di > kubeconfig.yaml
+
+# #       - name: Deploy
+# #         run: |
+# #           export KUBECONFIG=kubeconfig.yaml
+# #           kubectl replace --force -f test-job.yml
       
 
     
