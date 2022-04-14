@@ -36,7 +36,7 @@ jobs:
       - name: Check status
         run: |
           timestamp=$(date +%Y%m%d%H%M%S)
-          TEST1=0.0.5
+          TEST1=0.0.6
           cd ci-to-eks-test
           git config user.name "astravinskyi-gl"
           git config user.email "a.stravinskyi@globallogic.com"
