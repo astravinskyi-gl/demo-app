@@ -1,0 +1,44 @@
+name: Test Pull request creation
+
+on:
+  workflow_dispatch:
+#   push:
+#     branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+#     permissions:
+#       id-token: write
+#       contents: write
+
+    env:
+#       DOCKER_USER: ${{ secrets.DOCKER_USER }}
+#       DOCKER_HUB_REPO: demoapp
+#       AWS_REGION: us-east-2
+#       AWS_ROLE: arn:aws:iam::331226338131:role/ci-GithubActionsRole
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          # Fetch all commits
+          fetch-depth: 0
+          
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          repository: astravinskyi-gl/ci-to-eks-test
+          path: ci-to-eks-test
+          
+      - name: Check status
+        run: |
+          cd ci-to-eks-test
+          git status
+          git branch
+         
+      - name: Check status
+        run: |
+          git status
+          git branch
