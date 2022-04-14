@@ -35,15 +35,13 @@ jobs:
           
       - name: Check status
         run: |
-          TEST1=0.0.3
+          TEST1=0.0.5
           cd ci-to-eks-test
           git config user.name "astravinskyi-gl"
           git config user.email "a.stravinskyi@globallogic.com"
-          #git checkout -b "update-mmg-version"
           sed -i 's/# def print_hi(name):/# image: '"$TEST1"'/' CI-helper.py
           git add CI-helper.py
           git commit -m "feat: change mmg version"
-          #git push origin update-mmg-version
 
 #       - name: Edit file
 #         run: |
