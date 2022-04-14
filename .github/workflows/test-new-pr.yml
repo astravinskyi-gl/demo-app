@@ -35,13 +35,14 @@ jobs:
           
       - name: Check status
         run: |
+          timestamp=$(date +%Y%m%d%H%M%S)
           TEST1=0.0.5
           cd ci-to-eks-test
           git config user.name "astravinskyi-gl"
           git config user.email "a.stravinskyi@globallogic.com"
           sed -i 's/# def print_hi(name):/# image: '"$TEST1"'/' CI-helper.py
           git add CI-helper.py
-          git commit -m "feat: change mmg version"
+          git commit -m "feat: change mmg version $timestamp"
 
 #       - name: Edit file
 #         run: |
@@ -67,7 +68,7 @@ jobs:
           path: ci-to-eks-test
           add-paths: ci-to-eks-test/*
           token: ${{ secrets.PAT }}
-          commit-message: 'feat: update mmg version'
+          #commit-message: 'feat: update mmg version'
 #           committer: ci-workflow
 #           author: ci-workflow
           branch: update-mmg-version
