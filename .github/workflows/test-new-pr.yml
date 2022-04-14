@@ -55,7 +55,7 @@ jobs:
           git status
           git commit -m "feat: change mmg version"
           git status
-          #git push origin update-mmg-version
+          git push origin update-mmg-version
           echo ${{ secrets.PAT }} > my_token.txt
           cat my_token.txt
           gh auth login --with-token < my_token.txt
