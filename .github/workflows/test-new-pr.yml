@@ -44,10 +44,11 @@ jobs:
 
       - name: Edit file
         run: |
-          TEST1=0.0.1
+          TEST1=5.6.1
           cd ci-to-eks-test
           git config user.name "CI Actions Bot"
           git config user.email "<>"
+          cat CI-helper.py
           git checkout -b "update-mmg-version"
           sed 's/# def print_hi(name):/# image: '"$TEST1"'/' CI-helper.py
           git add CI-helper.py
