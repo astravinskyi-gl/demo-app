@@ -47,8 +47,8 @@ jobs:
         run: |
           TEST1=5.6.1
           cd ci-to-eks-test
-          #git config user.name "astravinskyi-gl"
-          #git config user.email "a.stravinskyi@globallogic.com"
+          git config user.name "astravinskyi-gl"
+          git config user.email "a.stravinskyi@globallogic.com"
           git checkout -b "update-mmg-version"
           sed -i 's/# def print_hi(name):/# image: '"$TEST1"'/' CI-helper.py
           cat CI-helper.py
