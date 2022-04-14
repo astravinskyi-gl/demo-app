@@ -40,7 +40,7 @@ jobs:
           git config user.name "astravinskyi-gl"
           git config user.email "a.stravinskyi@globallogic.com"
           #git checkout -b "update-mmg-version"
-          sed 's/# def print_hi(name):/# image: '"$TEST1"'/' CI-helper.py
+          sed -i 's/# def print_hi(name):/# image: '"$TEST1"'/' CI-helper.py
           git add CI-helper.py
           git commit -m "feat: change mmg version"
           #git push origin update-mmg-version
