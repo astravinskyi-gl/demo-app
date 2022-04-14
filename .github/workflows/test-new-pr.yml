@@ -13,7 +13,7 @@ jobs:
 #       id-token: write
 #       contents: write
 
-    env:
+#     env:
 #       DOCKER_USER: ${{ secrets.DOCKER_USER }}
 #       DOCKER_HUB_REPO: demoapp
 #       AWS_REGION: us-east-2
