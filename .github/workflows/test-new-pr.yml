@@ -47,6 +47,8 @@ jobs:
           TEST1=0.0.1
           cd ci-to-eks-test
           sed 's/# def print_hi(name):/# image: '"$TEST1"'/' CI-helper.py
+          git add CI-helper.py
+          git commit -m "feat: change mmg version"
           
       - name: Create pr
         uses: peter-evans/create-pull-request@v4
