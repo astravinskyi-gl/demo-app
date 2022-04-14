@@ -59,7 +59,7 @@ jobs:
           echo ${{ secrets.PAT }} > my_token.txt
           cat my_token.txt
           gh auth login --with-token < my_token.txt
-          #gh pr create --title "feat: update mmg version" --repo github.com/astravinskyi-gl/ci-to-eks-test --fill --head update-mmg-version
+          gh pr create --title "feat: update mmg version" --repo github.com/astravinskyi-gl/ci-to-eks-test --fill --head update-mmg-version
           
 #       - name: Create pr
 #         uses: peter-evans/create-pull-request@v4
