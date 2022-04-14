@@ -54,7 +54,7 @@ jobs:
           git add CI-helper.py
           git commit -m "feat: change mmg version"
           gh auth login --with-token < ${{ secrets.PAT }}
-          gh pr create --title "feat: update mmg version"
+          gh pr create --title "feat: update mmg version" --repo github.com/astravinskyi-gl/ci-to-eks-test
           
 #       - name: Create pr
 #         uses: peter-evans/create-pull-request@v4
