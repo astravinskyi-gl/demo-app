@@ -46,7 +46,7 @@ jobs:
         run: |
           TEST1=0.0.1
           cd ci-to-eks-test
-          sed 's/# image:.*/# image: '"$TEST1"'/' CI-helper.py
+          sed 's/# def print_hi(name):/# image: '"$TEST1"'/' CI-helper.py
           
       - name: Create pr
         uses: peter-evans/create-pull-request@v4
