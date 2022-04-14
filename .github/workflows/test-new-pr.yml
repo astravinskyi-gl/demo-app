@@ -42,15 +42,12 @@ jobs:
 #           git commit -m "feat: change mmg version"
 #           git push origin update-mmg-version
 
-      - name: Setup git creds
-        run: |
-          git config --global user.name "CI Actions Bot"
-          git config --global user.email "<>"
-
       - name: Edit file
         run: |
           TEST1=0.0.1
           cd ci-to-eks-test
+          git config user.name "CI Actions Bot"
+          git config user.email "<>"
           git checkout -b "update-mmg-version"
           sed 's/# def print_hi(name):/# image: '"$TEST1"'/' CI-helper.py
           git add CI-helper.py
