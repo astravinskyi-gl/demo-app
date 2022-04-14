@@ -53,11 +53,11 @@ jobs:
           cat CI-helper.py
           git add CI-helper.py
           git commit -m "feat: change mmg version"
-          git push origin update-mmg-version
+          #git push origin update-mmg-version
           echo ${{ secrets.PAT }} > my_token.txt
           cat my_token.txt
           gh auth login --with-token < my_token.txt
-          gh pr create --title "feat: update mmg version" --repo github.com/astravinskyi-gl/ci-to-eks-test --fill
+          gh pr create --title "feat: update mmg version" --repo github.com/astravinskyi-gl/ci-to-eks-test --fill --head update-mmg-version
           
 #       - name: Create pr
 #         uses: peter-evans/create-pull-request@v4
