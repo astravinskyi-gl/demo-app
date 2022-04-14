@@ -32,11 +32,33 @@ jobs:
           repository: astravinskyi-gl/ci-to-eks-test
           path: ci-to-eks-test
           
-      - name: Check status
+#       - name: Check status
+#         run: |
+#           TEST1=0.0.1
+#           cd ci-to-eks-test
+#           git checkout -b "update-mmg-version"
+#           sed 's/# image:.*/# image: '"$TEST1"'/' CI-helper.py
+#           git add CI-helper.py
+#           git commit -m "feat: change mmg version"
+#           git push origin update-mmg-version
+
+      - name: Edit file
         run: |
+          TEST1=0.0.1
           cd ci-to-eks-test
-          git status
-          git branch
+          sed 's/# image:.*/# image: '"$TEST1"'/' CI-helper.py
+          
+      - name: Create pr
+        uses: peter-evans/create-pull-request@v4
+        with:
+          path: ci-to-eks-test
+          token: ${{ secrets.PAT }}
+          commit-message: 'feat: update mmg version'
+          committer: ci-workflow
+          author: ci-workflow
+          branch: update-mmg-version
+          delete-branch: true
+          reviewers: astravinskyi-gl
          
       - name: Check status
         run: |
