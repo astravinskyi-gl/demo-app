@@ -46,22 +46,24 @@ jobs:
         run: |
           TEST1=0.0.1
           cd ci-to-eks-test
+          git checkout -b "update-mmg-version"
           sed 's/# def print_hi(name):/# image: '"$TEST1"'/' CI-helper.py
           git add CI-helper.py
           git commit -m "feat: change mmg version"
+          gh pr create --title "feat: update mmg version" --reviewer astravinskyi-gl
           
-      - name: Create pr
-        uses: peter-evans/create-pull-request@v4
-        with:
-          path: ci-to-eks-test
-          add-paths: ci-to-eks-test/*
-          token: ${{ secrets.PAT }}
-          commit-message: 'feat: update mmg version'
-#           committer: ci-workflow
-#           author: ci-workflow
-          branch: update-mmg-version
-          delete-branch: true
-          reviewers: astravinskyi-gl
+#       - name: Create pr
+#         uses: peter-evans/create-pull-request@v4
+#         with:
+#           path: ci-to-eks-test
+#           add-paths: ci-to-eks-test/*
+#           token: ${{ secrets.PAT }}
+#           commit-message: 'feat: update mmg version'
+# #           committer: ci-workflow
+# #           author: ci-workflow
+#           branch: update-mmg-version
+#           delete-branch: true
+#           reviewers: astravinskyi-gl
          
       - name: Check status
         run: |
