@@ -52,6 +52,7 @@ jobs:
         uses: peter-evans/create-pull-request@v4
         with:
           path: ci-to-eks-test
+          add-paths: ci-to-eks-test/*
           token: ${{ secrets.PAT }}
           commit-message: 'feat: update mmg version'
 #           committer: ci-workflow
