@@ -54,8 +54,8 @@ jobs:
           path: ci-to-eks-test
           token: ${{ secrets.PAT }}
           commit-message: 'feat: update mmg version'
-          committer: ci-workflow
-          author: ci-workflow
+#           committer: ci-workflow
+#           author: ci-workflow
           branch: update-mmg-version
           delete-branch: true
           reviewers: astravinskyi-gl
