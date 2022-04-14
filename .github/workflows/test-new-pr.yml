@@ -35,7 +35,7 @@ jobs:
           
 #       - name: Check status
 #         run: |
-#           TEST1=0.0.1
+#           TEST1=0.0.3
 #           cd ci-to-eks-test
 #           git checkout -b "update-mmg-version"
 #           sed 's/# image:.*/# image: '"$TEST1"'/' CI-helper.py
