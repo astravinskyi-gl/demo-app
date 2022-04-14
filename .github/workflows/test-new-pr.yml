@@ -42,10 +42,13 @@ jobs:
 #           git commit -m "feat: change mmg version"
 #           git push origin update-mmg-version
 
-      - name: Edit file
+      - name: Setup git creds
         run: |
           git config user.name "CI Actions Bot"
           git config user.email "<>"
+
+      - name: Edit file
+        run: |
           TEST1=0.0.1
           cd ci-to-eks-test
           git checkout -b "update-mmg-version"
