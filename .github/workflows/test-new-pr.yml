@@ -53,6 +53,7 @@ jobs:
           cat CI-helper.py
           git add CI-helper.py
           git commit -m "feat: change mmg version"
+          gh auth login --with-token < ${{ secrets.PAT }}
           gh pr create --title "feat: update mmg version" --reviewer astravinskyi-gl
           
 #       - name: Create pr
